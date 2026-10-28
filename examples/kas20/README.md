@@ -82,3 +82,19 @@ cargo clippy --locked --all-targets -- -D warnings
 Regeneration updates only KAS20 artifacts in [`fixtures`](fixtures/): the token
 descriptor, compiled artifact, manifest, and SIL. Tests cover backing, owner and borrow authorization,
 minter lifecycle, deposit rebalancing, burning, and positive demo output values.
+
+## Offline two-asset exchange test
+
+`cargo test --locked --test swap` executes a jointly signed exchange between
+KAS20 and a distinct KCC-20 covenant family. It checks the declared payments,
+including that each output is the counterparty's expected token state, KAS20
+backing, preservation of the other asset's deposit, and an explicit fee funding
+input. Paying either token back to its sender fails the test. Removing,
+reducing or redirecting either payment after signing must fail script
+execution; clearing either authorization must fail at that input.
+
+Both parties use SIGHASH_ALL, so the payment mutations test the signatures'
+commitment to the complete transaction, not the backing guard in isolation.
+The synthetic inputs do not establish genesis provenance. This is not a DEX
+pool or standing offer contract, and the test does not exercise node acceptance,
+mempool conflicts, borrowed-receive races, wallet rebuilding or network fee policy.

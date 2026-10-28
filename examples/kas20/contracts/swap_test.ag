@@ -1,0 +1,5 @@
+import "./token.ag";
+app SwapTest {
+ actor KAS20;
+ actor KCC20;
+}
